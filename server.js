@@ -165,7 +165,7 @@ async function runMigrations() {
 }
 
 // ─── Iniciar servidor ─────────────────────────────────────────────────────────
-app.listen(PORT, 0.0.0.0, async () => {
+app.listen(PORT, '0.0.0.0', async () => {
   console.log(`\n🚀 AtomTask corriendo en http://localhost:${PORT}`);
   console.log(`📂 Ambiente: ${process.env.NODE_ENV || 'development'}\n`);
   await runMigrations();
