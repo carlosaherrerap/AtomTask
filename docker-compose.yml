@@ -1,0 +1,66 @@
+services:
+
+  # ─── PostgreSQL ──────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: atomtask-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: atomtask
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-atomtask123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    ports:
+      - "5433:5432"   # 5433 en host para no chocar con postgres local
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d atomtask"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── AtomTask App ────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: atomtask-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      NODE_ENV: production
+
+      # Base de datos (apunta al servicio postgres del compose)
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: atomtask
+      DB_USER: postgres
+      DB_PASSWORD: ${DB_PASSWORD:-atomtask123}
+
+      # Sesión
+      SESSION_SECRET: ${SESSION_SECRET:-atomtask-super-secret-key-change-in-production}
+
+      # Google OAuth
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-http://localhost:3000/auth/google/callback}
+      BASE_URL: ${BASE_URL:-http://localhost:3000}
+    ports:
+      - "3000:3000"
+    volumes:
+      # Montar solo lo necesario en dev (quitar en prod)
+      - ./public:/app/public:ro
+      - ./views:/app/views:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/login"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:
+    name: atomtask-postgres-data
