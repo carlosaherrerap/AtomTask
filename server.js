@@ -41,7 +41,7 @@ app.use(session({
   store: new PgSession({
     pool,
     tableName: 'session',
-    createTableIfMissing: true,
+    createTableIfMissing: false,
   }),
   secret: process.env.SESSION_SECRET || 'atomtask-dev-secret-change-me',
   resave: false,
