@@ -144,31 +144,10 @@ app.use((err, req, res, next) => {
   res.status(500).send('Error interno del servidor');
 });
 
-// ─── Auto-migración al iniciar ────────────────────────────────────────────────
-async function runMigrations() {
-  try {
-    console.log('🔄 Ejecutando migraciones...');
-    await query(`
-      CREATE TABLE IF NOT EXISTS project_permissions (
-        project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
-        email VARCHAR(255) NOT NULL,
-        can_view BOOLEAN DEFAULT TRUE,
-        can_edit BOOLEAN DEFAULT FALSE,
-        can_delete BOOLEAN DEFAULT FALSE,
-        PRIMARY KEY (project_id, email)
-      );
-    `);
-    console.log('✅ Migraciones completadas.');
-  } catch (err) {
-    console.error('⚠️ Error en migraciones (no crítico):', err.message);
-  }
-}
-
 // ─── Iniciar servidor ─────────────────────────────────────────────────────────
-app.listen(PORT, '0.0.0.0', async () => {
-  console.log(`\n🚀 AtomTask corriendo en http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n🚀 AtomTask corriendo en http://0.0.0.0:${PORT}`);
   console.log(`📂 Ambiente: ${process.env.NODE_ENV || 'development'}\n`);
-  await runMigrations();
 });
 
 module.exports = app;

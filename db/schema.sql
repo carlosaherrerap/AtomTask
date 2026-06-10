@@ -123,6 +123,18 @@ CREATE TRIGGER update_projects_updated_at
 
 -- ============================================
 -- ============================================
+-- TABLA: project_permissions
+-- ============================================
+CREATE TABLE IF NOT EXISTS project_permissions (
+    project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
+    email VARCHAR(255) NOT NULL,
+    can_view BOOLEAN DEFAULT TRUE,
+    can_edit BOOLEAN DEFAULT FALSE,
+    can_delete BOOLEAN DEFAULT FALSE,
+    PRIMARY KEY (project_id, email)
+);
+
+-- ============================================
 -- TABLA: contacts
 -- ============================================
 CREATE TABLE IF NOT EXISTS contacts (
