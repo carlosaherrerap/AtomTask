@@ -130,7 +130,7 @@ app.get('/login', (req, res) => {
 });
 
 // ─── SPA – catch-all sirve index.html ──
-app.get(['/', '/*'], (req, res) => {
+app.get(['/', '/{*path}'], (req, res) => {
   if (!req.isAuthenticated()) return res.redirect('/login');
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
