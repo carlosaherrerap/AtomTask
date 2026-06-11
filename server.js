@@ -129,8 +129,8 @@ app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'login.html'));
 });
 
-// ─── SPA – catch-all sirve index.html (Express 5: usar /{*path} en vez de *) ──
-app.get('/{*path}', (req, res) => {
+// ─── SPA – catch-all sirve index.html ──
+app.get(['/', '/*'], (req, res) => {
   if (!req.isAuthenticated()) return res.redirect('/login');
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });

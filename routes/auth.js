@@ -28,7 +28,13 @@ router.get('/google/callback',
     failureMessage: true,
   }),
   (req, res) => {
-    res.redirect('/');
+    // Forzamos a que la sesión se guarde en la BD antes de redirigir,
+    // esto evita una condición de carrera donde el frontend carga '/'
+    // antes de que PostgreSQL termine de guardar la sesión.
+    req.session.save((err) => {
+      if (err) console.error('Error guardando la sesión:', err);
+      res.redirect('/');
+    });
   }
 );
 
