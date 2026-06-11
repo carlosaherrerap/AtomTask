@@ -145,7 +145,7 @@ app.use((err, req, res, next) => {
 });
 
 // ─── Iniciar servidor ─────────────────────────────────────────────────────────
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
   console.log(`\n🚀 AtomTask corriendo en http://0.0.0.0:${PORT}`);
   console.log(`📂 Ambiente: ${process.env.NODE_ENV || 'development'}\n`);
 });

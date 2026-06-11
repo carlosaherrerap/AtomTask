@@ -50,7 +50,7 @@ services:
       GOOGLE_CALLBACK_URL: ${GOOGLE_CALLBACK_URL:-http://localhost:3000/auth/google/callback}
       BASE_URL: ${BASE_URL:-http://localhost:3000}
     ports:
-      - "3000:3000"
+      - "4000:3000"
     volumes:
       # Montar solo lo necesario en dev (quitar en prod)
       - ./public:/app/public:ro

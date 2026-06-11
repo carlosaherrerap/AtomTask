@@ -1,0 +1,46 @@
+databases:
+  - name: atomtask-db
+    databaseName: atomtask
+    user: atomtask_user
+    plan: free
+
+services:
+  - type: web
+    name: atomtask-app
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node migrate.js && npm start
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: atomtask-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: atomtask-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: atomtask-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: atomtask-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: atomtask-db
+          property: password
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_CALLBACK_URL
+        sync: false
+      - key: BASE_URL
+        sync: false

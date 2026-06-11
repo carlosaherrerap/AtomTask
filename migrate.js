@@ -1,26 +1,23 @@
+'use strict';
+require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 const { pool } = require('./db/db');
 
-async function migrate() {
-  const client = await pool.connect();
+async function runMigrations() {
+  console.log('🔄 Iniciando migración de base de datos...');
   try {
-    console.log('Starting migration to create project_permissions table...');
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS project_permissions (
-        project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
-        email VARCHAR(255) NOT NULL,
-        can_view BOOLEAN DEFAULT TRUE,
-        can_edit BOOLEAN DEFAULT FALSE,
-        can_delete BOOLEAN DEFAULT FALSE,
-        PRIMARY KEY (project_id, email)
-      );
-    `);
-    console.log('project_permissions table created successfully.');
+    const schemaPath = path.join(__dirname, 'db', 'schema.sql');
+    const sql = fs.readFileSync(schemaPath, 'utf8');
+
+    await pool.query(sql);
+    console.log('✅ Migración completada con éxito. Las tablas están listas.');
   } catch (err) {
-    console.error('Migration failed:', err);
+    console.error('❌ Error durante la migración:', err);
+    process.exit(1);
   } finally {
-    client.release();
-    pool.end();
+    await pool.end();
   }
 }
 
-migrate();
+runMigrations();
