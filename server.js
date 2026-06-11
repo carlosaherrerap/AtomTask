@@ -37,6 +37,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ─── Sesiones con PostgreSQL ───────────────────────────────────────────────────
+app.set('trust proxy', 1); // Fundamental para Render y cookies secure detrás del Load Balancer
 app.use(session({
   store: new PgSession({
     pool,
